@@ -8,7 +8,7 @@
 - [Livro AAD Algorithms-Aided Design - sobre Grasshopper](https://www.amazon.com/Algorithms-Aided-Design-Parametric-strategies-Grasshopper/dp/8895315308)
 
 ### Referencias Avançadas
-- [Forum com dúvidas gerais de Grasshopper] (https://discourse.mcneel.com/c/grasshopper/2)
+- [Forum com dúvidas gerais de Grasshopper](https://discourse.mcneel.com/c/grasshopper/2)
 
 ### Softwares e Plugins Utilizados
 - [Rhinoceros 3D - trial de 90 dias](https://www.rhino3d.com/download/)
@@ -17,8 +17,8 @@
 - [Plugins para Rhino e Grasshopper](https://www.food4rhino.com/en)
 
 ### Observações Gerais
-- [A maioria dos pluggins do Grasshopper possuem apenas versão para Windows, já que o Rhinoceros 3D foi desenvolvido para Windows originalmente. Atualmente existe Rhinoceros 3D e Grasshopper 3D para MAC, mas é recomendável utilizar a versão para Windows.]
-- [Apesar do Rhinoceros possuir um trial de 90 dias, é possível obter uma cópia vitalícia e original no Brasil](https://www.rbfd.com.br/faq/)
+- A maioria dos pluggins do Grasshopper possuem apenas versão para Windows, já que o Rhinoceros 3D foi desenvolvido para Windows originalmente. Atualmente existe Rhinoceros 3D e Grasshopper 3D para MAC, mas é recomendável utilizar a versão para Windows.
+- Apesar do Rhinoceros possuir um trial de 90 dias, é possível obter uma cópia vitalícia e original no Brasil pela [Rede Brasileira de Fabricação Digital](https://www.rbfd.com.br/faq/)
 
 ## Conceitos de Interatividade. Apresentação de Hardware e Software
 
