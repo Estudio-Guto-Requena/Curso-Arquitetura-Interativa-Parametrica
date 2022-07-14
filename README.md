@@ -1,5 +1,7 @@
 # Curso Objetos e Espaços Paramétricos Interativos
 
+---
+
 ## Conceitos de Parametria. Apresentação de Software
 
 ### Referências Básicas
@@ -19,6 +21,8 @@
 ### Observações Gerais
 - A maioria dos pluggins do Grasshopper possuem apenas versão para Windows, já que o Rhinoceros 3D foi desenvolvido para Windows originalmente. Atualmente existe Rhinoceros 3D e Grasshopper 3D para MAC, mas é recomendável utilizar a versão para Windows.
 - Apesar do Rhinoceros possuir um trial de 90 dias, é possível obter uma cópia vitalícia e original no Brasil pela [Rede Brasileira de Fabricação Digital](https://www.rbfd.com.br/faq/)
+
+---
 
 ## Conceitos de Interatividade. Apresentação de Hardware e Software
 
