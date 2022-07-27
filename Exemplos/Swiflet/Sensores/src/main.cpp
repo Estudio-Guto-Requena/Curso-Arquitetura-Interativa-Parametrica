@@ -44,7 +44,7 @@ float ypr[3];         // [yaw, pitch, roll]   yaw/pitch/roll container and gravi
 AsyncWebServer server(80);
 String strReceive = "";
 
-const byte RATE_SIZE = 10; //Increase this for more averaging. 4 is good.
+const byte RATE_SIZE = 12; //Increase this for more averaging. 4 is good.
 byte rates[RATE_SIZE]; //Array of heart rates
 byte rateSpot = 0;
 long lastBeat = 0; //Time at which the last beat occurred
@@ -57,6 +57,10 @@ Ticker TickerMPU;
 Ticker TickerBPM;
 Ticker TickerDIST;
 
+
+/*---------------------- Funcoes de inicializacao ---------------------------*/
+
+//Inicializacao do display
 void startDisplay() {
     if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
         Serial.println(F("SSD1306 allocation failed"));
@@ -67,6 +71,7 @@ void startDisplay() {
     display.display();
 }
 
+//Inicializacao do lidar
 void startDistance() {
     if (!lox.begin()) {
         Serial.println("Failed to boot VL53L0X");
@@ -76,6 +81,7 @@ void startDistance() {
     lox.startRangeContinuous();
 }
 
+//Inicializacao do sensor de bpm
 void startBPMSensor() {
     if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {
         Serial.println("MAX30105 was not found. Please check wiring/power. ");
@@ -87,11 +93,10 @@ void startBPMSensor() {
     particleSensor.setPulseAmplitudeRed(0x0A);
     particleSensor.setPulseAmplitudeGreen(0);
 
-    particleSensor.setup(); //Configure sensor with these settings
-
-
+    particleSensor.setup();
 }
 
+//Inicializacao do wifi
 void startWiFi() {
     WiFi.begin(SSID, PASS);
     while (WiFi.status() != WL_CONNECTED) {
@@ -105,6 +110,7 @@ void startWiFi() {
     MDNS.addService("esp", "tcp", 80);  // Announce esp tcp service on port 8080
 }
 
+//Inicializacao do sensor acelerometro
 void startAccelerometer(MPU6050 &MpuObject) {
     uint8_t devStatus;
 
@@ -132,6 +138,7 @@ void startAccelerometer(MPU6050 &MpuObject) {
     Serial.println("MPU6050 started");
 }
 
+//Trata uma callback da api para receber texto na tela
 void setText(AsyncWebServerRequest *request, JsonVariant &json) {
     String str = json["text"];
     strReceive = str;
@@ -139,6 +146,7 @@ void setText(AsyncWebServerRequest *request, JsonVariant &json) {
     request->send(200);
 }
 
+//Trata uma callback da api para receber texto na tela
 void drawText(String txt, int line) {
     display.setTextSize(1);
     display.setTextColor(WHITE);
@@ -146,12 +154,14 @@ void drawText(String txt, int line) {
     display.println(txt);
 }
 
+//Reinicia a contagem de bpm
 void restartBPMCount() {
   beatsPerMinute = 60;
   beatAvg = 60;
   for (int i = 0; i < RATE_SIZE; i++) rates[i] = 60;
 }
 
+//Calcula a taxa de bpms em tempo real
 void bpmCalculate () {
     long irValue = particleSensor.getIR();
     if (irValue >= 50000) {
@@ -172,10 +182,12 @@ void bpmCalculate () {
     else restartBPMCount();
 }
 
+//Calcula a distancia a partir do sensor licar
 void distCalculate() {
     if (lox.isRangeComplete()) distance = lox.readRange();
 }
 
+////Trata a request da API para o sensor acelerometro/giroscopio
 void getAccData(AsyncWebServerRequest *request) {
     AsyncResponseStream *response = request->beginResponseStream("application/json");
     DynamicJsonDocument jsonData(256);
@@ -192,6 +204,7 @@ void getAccData(AsyncWebServerRequest *request) {
     request->send(response);
 }
 
+//Trata a request da API para o batimento cardiaco
 void getBpmData(AsyncWebServerRequest *request) {
     AsyncResponseStream *response = request->beginResponseStream("application/json");
     DynamicJsonDocument jsonData(256);
@@ -203,6 +216,7 @@ void getBpmData(AsyncWebServerRequest *request) {
     request->send(response);
 }
 
+//Trata a request da API para o calculo de distancia
 void getDistData(AsyncWebServerRequest *request) {
     AsyncResponseStream *response = request->beginResponseStream("application/json");
     DynamicJsonDocument jsonData(256);
@@ -213,6 +227,7 @@ void getDistData(AsyncWebServerRequest *request) {
     request->send(response);
 }
 
+//Configura o server para as chamadas da API
 void startServerAPI() {
     server.on("/getAcc", HTTP_GET, getAccData);
     server.on("/getBpm", HTTP_GET, getBpmData);
@@ -222,6 +237,7 @@ void startServerAPI() {
     server.begin();
 }
 
+//Calcula os valores de aceleração e giro a aprtir dos sensores
 void mpuGetValues(MPU6050 &MpuObject) {
     packetSize = mpu.dmpGetFIFOPacketSize();
     mpuIntStatus = mpu.getIntStatus();
@@ -242,11 +258,12 @@ void mpuGetValues(MPU6050 &MpuObject) {
     }
 }
 
+//Calback interno
 void accelerometer() {
     mpuGetValues(mpu);
 }
 
-
+//Escreve dados no display
 void displayInfos() {
     display.clearDisplay();
     drawText("angle:" + String(int(ypr[0])) + " " + String(int(ypr[1])) + " " + String(int(ypr[2])), 0);
@@ -255,6 +272,7 @@ void displayInfos() {
     display.display();
 }
 
+//Chama as funcoes de inicializacao
 void setup() {
     Serial.begin(115200);
     Wire.setClock(400000);
@@ -265,13 +283,15 @@ void setup() {
     startDistance();
     startWiFi();
     startServerAPI();
-    TickerMPU.attach_ms(10, accelerometer);
+    TickerMPU.attach_ms(20, accelerometer);
     TickerBPM.attach_ms(20, bpmCalculate);
-    TickerDIST.attach_ms(20, distCalculate);
+    TickerDIST.attach_ms(50, distCalculate);
 }
 
+//Loop principal
 void loop() {
     displayInfos();
     MDNS.update();
     yield();
+
 }
